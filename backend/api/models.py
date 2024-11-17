@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 
 class Employee(models.Model):
     id = models.CharField(max_length=10, primary_key=True)
