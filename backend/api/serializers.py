@@ -31,7 +31,21 @@ class EmployeeSerializer(serializers.ModelSerializer):
             except Cafe.DoesNotExist:
                 pass
         return employee
-
+    
+    def update(self, instance, validated_data):
+        cafe_name = validated_data.pop('cafe', None)
+        instance = super().update(instance, validated_data)
+        if cafe_name:
+            try:
+                cafe = Cafe.objects.get(name=cafe_name)
+                employee_cafe, created = EmployeeCafe.objects.get_or_create(employee=instance)
+                employee_cafe.cafe = cafe
+                employee_cafe.start_date = date.today()
+                employee_cafe.save()
+            except Cafe.DoesNotExist:
+                pass
+        return instance
+    
 class CafeSerializer(serializers.ModelSerializer):
     employees = serializers.SerializerMethodField(read_only=True)
 
