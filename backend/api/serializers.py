@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Employee, Cafe, EmployeeCafe
+from datetime import date
 
 class EmployeeSerializer(serializers.ModelSerializer):
     days_worked = serializers.SerializerMethodField(read_only=True)
@@ -31,7 +32,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
             except Cafe.DoesNotExist:
                 pass
         return employee
-    
+
     def update(self, instance, validated_data):
         cafe_name = validated_data.pop('cafe', None)
         instance = super().update(instance, validated_data)
