@@ -22,7 +22,7 @@ const EmployeeList: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/employees/${id}/delete/`);
+      await axios.delete(`http://127.0.0.1:8000/api/employees/delete/${id}/`);
       fetchEmployees();
     } catch (error) {
       console.error('Error deleting employee:', error);
@@ -31,7 +31,11 @@ const EmployeeList: React.FC = () => {
 
   const handleAddNewEmployee = () => {
     navigate('/employees/add');
-};
+  };
+
+  const handleEditEmployee = (id: number) => {
+    navigate(`/employees/edit/${id}`);
+  };
 
   return (
     <div>
@@ -59,10 +63,12 @@ const EmployeeList: React.FC = () => {
                 <TableCell>{employee.days_worked}</TableCell>
                 <TableCell>{employee.cafe}</TableCell>
                 <TableCell>
+                  <Button onClick={() => handleEditEmployee(employee.id)} variant="contained" color="primary">
+                    Edit
+                  </Button>
                   <Button onClick={() => handleDelete(employee.id)} variant="contained" color="secondary">
                     Delete
                   </Button>
-                  {/* Add Edit button */}
                 </TableCell>
               </TableRow>
             ))}
