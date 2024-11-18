@@ -1,3 +1,4 @@
+from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -98,7 +99,7 @@ class CafeDeleteView(APIView):
         Employee.objects.filter(employeecafe__cafe=cafe).delete()
         cafe.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
 class EmployeeDeleteView(APIView):
     def delete(self, request, pk):
         try:
