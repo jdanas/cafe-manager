@@ -26,6 +26,7 @@ const EmployeeForm: React.FC = () => {
   const fetchCafes = async () => {
     try {
       const response = await axios.get('http://127.0.0.1:8000/api/cafes/');
+      console.log('Fetched cafes:', response.data); // Log the fetched data
       setCafes(response.data);
     } catch (error) {
       console.error('Error fetching cafes:', error);
