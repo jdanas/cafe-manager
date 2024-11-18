@@ -45,3 +45,11 @@ class EmployeeListView(APIView):
         employees = sorted(employees, key=lambda emp: (date.today() - EmployeeCafe.objects.filter(employee=emp).first().start_date).days if EmployeeCafe.objects.filter(employee=emp).exists() else 0, reverse=True)
         serializer = EmployeeSerializer(employees, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class CafeCreateView(APIView):
+    def post(self, request):
+        serializer = CafeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

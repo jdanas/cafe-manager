@@ -22,11 +22,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
         return ''
 
 class CafeSerializer(serializers.ModelSerializer):
-    employees = serializers.SerializerMethodField()
+    employees = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Cafe
-        fields = ['name', 'description', 'employees', 'logo', 'location']
+        fields = ['id', 'name', 'description', 'employees', 'logo', 'location']
 
     def get_employees(self, obj):
         return EmployeeCafe.objects.filter(cafe=obj).count()
