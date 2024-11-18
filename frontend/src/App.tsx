@@ -1,24 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import CafeList from './components/CafeList';
+import EmployeeList from './components/EmployeeList';
 
 const App: React.FC = () => {
-    const [message, setMessage] = useState<string>('');
-
-    useEffect(() => {
-        fetch('http://127.0.0.1:8000/api/hello/')
-            .then(response => response.json())
-            .then(data => setMessage(data.message));
-    }, []);
-
-    return (
-        <div>
-            <Typography variant="h1">{message}</Typography>
-            <Button variant="contained" color="primary">
-                Hello World
-            </Button>
-        </div>
-    );
+  return (
+    <Router>
+      <div>
+        <Routes>
+          <Route path="/cafes" element={<CafeList />} />
+          <Route path="/employees" element={<EmployeeList />} />
+          <Route path="/" element={<CafeList />} />
+        </Routes>
+      </div>
+    </Router>
+  );
 };
 
 export default App;
