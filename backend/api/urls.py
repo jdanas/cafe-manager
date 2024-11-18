@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import EmployeeViewSet, CafeViewSet, EmployeeCafeViewSet, CafeListView, EmployeeListView, CafeCreateView, EmployeeCreateView, CafeUpdateView, EmployeeUpdateView
+from .views import EmployeeViewSet, CafeViewSet, EmployeeCafeViewSet, CafeListView, EmployeeListView, CafeCreateView, EmployeeCreateView, CafeUpdateView, EmployeeUpdateView, CafeDeleteView, EmployeeDeleteView
 
 router = DefaultRouter()
 router.register(r'employees', EmployeeViewSet)
@@ -15,4 +15,6 @@ urlpatterns = [
     path('employee/', EmployeeCreateView.as_view(), name='employee-create'),
     path('cafe/<int:pk>/', CafeUpdateView.as_view(), name='cafe-update'),
     path('employee/<int:pk>/', EmployeeUpdateView.as_view(), name='employee-update'),
+    path('cafe/<int:pk>/delete/', CafeDeleteView.as_view(), name='cafe-delete'),
+    path('employee/<int:pk>/delete/', EmployeeDeleteView.as_view(), name='employee-delete'),
 ]

@@ -1,4 +1,3 @@
-from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -61,7 +60,7 @@ class EmployeeCreateView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 class CafeUpdateView(APIView):
     def put(self, request, pk):
         try:
@@ -87,3 +86,25 @@ class EmployeeUpdateView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CafeDeleteView(APIView):
+    def delete(self, request, pk):
+        try:
+            cafe = Cafe.objects.get(pk=pk)
+        except Cafe.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        # Delete all employees under the cafe
+        Employee.objects.filter(employeecafe__cafe=cafe).delete()
+        cafe.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class EmployeeDeleteView(APIView):
+    def delete(self, request, pk):
+        try:
+            employee = Employee.objects.get(pk=pk)
+        except Employee.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        employee.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
