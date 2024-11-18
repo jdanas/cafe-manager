@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const EmployeeList: React.FC = () => {
   const [employees, setEmployees] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchEmployees();
@@ -25,6 +27,10 @@ const EmployeeList: React.FC = () => {
     } catch (error) {
       console.error('Error deleting employee:', error);
     }
+  };
+
+  const handleAddNewEmployee = () => {
+    navigate('/employees/add');
   };
 
   return (
@@ -63,7 +69,9 @@ const EmployeeList: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Button variant="contained" color="primary">Add New Employee</Button>
+      <Button onClick={handleAddNewEmployee} variant="contained" color="primary">
+        Add New Employee
+      </Button>
     </div>
   );
 };
