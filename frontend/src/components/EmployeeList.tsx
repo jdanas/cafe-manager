@@ -53,7 +53,9 @@ const EmployeeList: React.FC = () => {
                 <TableCell>{employee.days_worked}</TableCell>
                 <TableCell>{employee.cafe}</TableCell>
                 <TableCell>
-                  <Button onClick={() => handleDelete(employee.id)}>Delete</Button>
+                  <Button onClick={() => handleDelete(employee.id)} variant="contained" color="secondary">
+                    Delete
+                  </Button>
                   {/* Add Edit button */}
                 </TableCell>
               </TableRow>
@@ -61,7 +63,7 @@ const EmployeeList: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Button>Add New Employee</Button>
+      <Button variant="contained" color="primary">Add New Employee</Button>
     </div>
   );
 };

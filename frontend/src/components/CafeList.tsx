@@ -35,8 +35,12 @@ const CafeList: React.FC = () => {
         label="Filter by location"
         value={location}
         onChange={(e) => setLocation(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <Button onClick={() => setLocation('')}>Clear Filter</Button>
+      <Button onClick={() => setLocation('')} variant="contained" color="secondary">
+        Clear Filter
+      </Button>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -58,7 +62,9 @@ const CafeList: React.FC = () => {
                 <TableCell>{cafe.employees}</TableCell>
                 <TableCell>{cafe.location}</TableCell>
                 <TableCell>
-                  <Button onClick={() => handleDelete(cafe.id)}>Delete</Button>
+                  <Button onClick={() => handleDelete(cafe.id)} variant="contained" color="secondary">
+                    Delete
+                  </Button>
                   {/* Add Edit button and link to Employee page */}
                 </TableCell>
               </TableRow>
@@ -66,7 +72,7 @@ const CafeList: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Button>Add New Cafe</Button>
+      <Button variant="contained" color="primary">Add New Cafe</Button>
     </div>
   );
 };
