@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const CafeList: React.FC = () => {
   const [cafes, setCafes] = useState([]);
   const [location, setLocation] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCafes();
@@ -26,6 +28,10 @@ const CafeList: React.FC = () => {
     } catch (error) {
       console.error('Error deleting cafe:', error);
     }
+  };
+
+  const handleAddNewCafe = () => {
+    navigate('/cafes/add');
   };
 
   return (
@@ -72,7 +78,9 @@ const CafeList: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Button variant="contained" color="primary">Add New Cafe</Button>
+      <Button onClick={handleAddNewCafe} variant="contained" color="primary">
+        Add New Cafe
+      </Button>
     </div>
   );
 };

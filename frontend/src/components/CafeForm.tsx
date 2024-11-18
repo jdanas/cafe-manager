@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Typography, TextField, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+import { Button, TextField, Typography } from '@mui/material';
 import ReusableTextbox from './ReusableTextbox';
 
 const CafeForm: React.FC = () => {
@@ -8,15 +9,52 @@ const CafeForm: React.FC = () => {
   const [description, setDescription] = useState('');
   const [logo, setLogo] = useState<File | null>(null);
   const [location, setLocation] = useState('');
-  const isEditing = false; // Replace with actual logic to determine if editing
+  const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    // Add your form submission logic here
+  useEffect(() => {
+    if (id) {
+      setIsEditing(true);
+      fetchCafe(id);
+    }
+  }, [id]);
+
+  const fetchCafe = async (id: string) => {
     try {
-      // Example: await saveCafe({ name, description, logo, location });
-      console.log('Cafe saved successfully');
+      const response = await axios.get(`http://127.0.0.1:8000/api/cafes/${id}/`);
+      const cafe = response.data;
+      setName(cafe.name);
+      setDescription(cafe.description);
+      setLocation(cafe.location);
+    } catch (error) {
+      console.error('Error fetching cafe:', error);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('description', description);
+    if (logo) formData.append('logo', logo);
+    formData.append('location', location);
+
+    try {
+      if (isEditing) {
+        await axios.put(`http://127.0.0.1:8000/api/cafes/${id}/`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+      } else {
+        await axios.post('http://127.0.0.1:8000/api/cafe/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+      }
+      navigate('/cafes');
     } catch (error) {
       console.error('Error saving cafe:', error);
     }
