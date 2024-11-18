@@ -28,8 +28,8 @@ const EmployeeForm: React.FC = () => {
       const response = await axios.get('http://127.0.0.1:8000/api/cafes/');
       console.log('Fetched cafes:', response.data); // Log the fetched data
       setCafes(response.data);
-    } catch (error) {
-      console.error('Error fetching cafes:', error);
+    } catch (error: any) {
+      console.error('Error fetching cafes:', error.response ? error.response.data : error.message);
     }
   };
 
@@ -42,8 +42,8 @@ const EmployeeForm: React.FC = () => {
       setPhoneNumber(employee.phone_number);
       setGender(employee.gender);
       setCafe(employee.cafe);
-    } catch (error) {
-      console.error('Error fetching employee:', error);
+    } catch (error: any) {
+      console.error('Error fetching employee:', error.response ? error.response.data : error.message);
     }
   };
 
@@ -61,11 +61,11 @@ const EmployeeForm: React.FC = () => {
       if (isEditing) {
         await axios.put(`http://127.0.0.1:8000/api/employees/${id}/`, employeeData);
       } else {
-        await axios.post('http://127.0.0.1:8000/api/employee/', employeeData);
+        await axios.post('http://127.0.0.1:8000/api/employees/', employeeData);
       }
       navigate('/employees');
-    } catch (error) {
-      console.error('Error saving employee:', error);
+    } catch (error: any) {
+      console.error('Error saving employee:', error.response ? error.response.data : error.message);
     }
   };
 
