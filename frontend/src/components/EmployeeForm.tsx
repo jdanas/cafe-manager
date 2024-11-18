@@ -59,9 +59,9 @@ const EmployeeForm: React.FC = () => {
 
     try {
       if (isEditing) {
-        await axios.put(`http://127.0.0.1:8000/api/employees/${id}/`, employeeData);
+        await axios.put(`http://127.0.0.1:8000/api/employees/update/${id}/`, employeeData);
       } else {
-        await axios.post('http://127.0.0.1:8000/api/employees/', employeeData);
+        await axios.post('http://127.0.0.1:8000/api/employees/create/', employeeData);
       }
       navigate('/employees');
     } catch (error: any) {

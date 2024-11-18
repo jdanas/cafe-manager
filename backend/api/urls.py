@@ -12,9 +12,9 @@ urlpatterns = [
     path('cafes/', CafeListView.as_view(), name='cafe-list'),
     path('employees/', EmployeeListView.as_view(), name='employee-list'),
     path('cafe/', CafeCreateView.as_view(), name='cafe-create'),
-    path('employee/', EmployeeCreateView.as_view(), name='employee-create'),
+    path('employees/create/', EmployeeCreateView.as_view(), name='employee-create'),
+    path('employees/update/<int:pk>/', EmployeeUpdateView.as_view(), name='employee-update'),
+    path('employees/delete/<int:pk>/', EmployeeDeleteView.as_view(), name='employee-delete'),
     path('cafe/<int:pk>/', CafeUpdateView.as_view(), name='cafe-update'),
-    path('employee/<int:pk>/', EmployeeUpdateView.as_view(), name='employee-update'),
     path('cafe/<int:pk>/delete/', CafeDeleteView.as_view(), name='cafe-delete'),
-    path('employee/<int:pk>/delete/', EmployeeDeleteView.as_view(), name='employee-delete'),
 ]

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const EmployeeList: React.FC = () => {
   const [employees, setEmployees] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchEmployees();
@@ -20,12 +22,16 @@ const EmployeeList: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/employee/${id}/delete/`);
+      await axios.delete(`http://127.0.0.1:8000/api/employees/${id}/delete/`);
       fetchEmployees();
     } catch (error) {
       console.error('Error deleting employee:', error);
     }
   };
+
+  const handleAddNewEmployee = () => {
+    navigate('/employees/add');
+};
 
   return (
     <div>
@@ -63,7 +69,9 @@ const EmployeeList: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Button variant="contained" color="primary">Add New Employee</Button>
+      <Button onClick={handleAddNewEmployee} variant="contained" color="primary">
+        Add New Employee
+      </Button>
     </div>
   );
 };
