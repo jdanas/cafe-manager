@@ -47,7 +47,14 @@ const CafeForm: React.FC = () => {
         />
         <TextField
           type="file"
-          onChange={(e) => setLogo((e.target as HTMLInputElement).files ? (e.target as HTMLInputElement).files[0] : null)}
+          onChange={(e) => {
+            const target = e.target as HTMLInputElement;
+            if (target.files && target.files.length > 0) {
+              setLogo(target.files[0]);
+            } else {
+              setLogo(null);
+            }
+          }}
           inputProps={{ accept: 'image/*', maxSize: 2 * 1024 * 1024 }}
           fullWidth
           margin="normal"
