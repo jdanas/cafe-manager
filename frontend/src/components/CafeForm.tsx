@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Typography, TextField, Button } from '@mui/material';
 
 const fetchCafe = async (id: string) => {
@@ -40,17 +40,19 @@ const CafeForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
 
-  const { data: cafe, isLoading } = useQuery(['cafe', id], () => fetchCafe(id!), {
-    enabled: !!id,
+  const { data: cafe, isLoading } = useQuery({
+    queryKey: ['cafe', id],
+    queryFn: () => fetchCafe(id!),
+    enabled: !!id
   });
-
-  const mutation = useMutation(saveCafe, {
+  
+  const mutation = useMutation({
+    mutationFn: saveCafe,
     onSuccess: () => {
-      queryClient.invalidateQueries('cafes');
+      queryClient.invalidateQueries({ queryKey: ['cafes'] });
       navigate('/cafes');
-    },
+    }
   });
-
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const formData = new FormData();
