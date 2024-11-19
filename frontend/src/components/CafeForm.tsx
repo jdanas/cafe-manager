@@ -1,87 +1,96 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Button, TextField, Typography } from '@mui/material';
-import ReusableTextbox from './ReusableTextbox';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { Typography, TextField, Button } from '@mui/material';
+
+const fetchCafe = async (id: string) => {
+  const response = await axios.get(`http://127.0.0.1:8000/api/cafes/${id}/`);
+  return response.data;
+};
+
+const saveCafe = async (data: any) => {
+  const formData = new FormData();
+  formData.append('name', data.name);
+  formData.append('description', data.description);
+  if (data.logo) formData.append('logo', data.logo);
+  formData.append('location', data.location);
+
+  if (data.id) {
+    await axios.put(`http://127.0.0.1:8000/api/cafes/${data.id}/`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  } else {
+    await axios.post('http://127.0.0.1:8000/api/cafes/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  }
+};
 
 const CafeForm: React.FC = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [logo, setLogo] = useState<File | null>(null);
   const [location, setLocation] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (id) {
-      setIsEditing(true);
-      fetchCafe(id);
-    }
-  }, [id]);
+  const { data: cafe, isLoading } = useQuery(['cafe', id], () => fetchCafe(id!), {
+    enabled: !!id,
+  });
 
-  const fetchCafe = async (id: string) => {
-    try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/cafes/${id}/`);
-      const cafe = response.data;
-      setName(cafe.name);
-      setDescription(cafe.description);
-      setLocation(cafe.location);
-    } catch (error) {
-      console.error('Error fetching cafe:', error);
-    }
-  };
+  const mutation = useMutation(saveCafe, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('cafes');
+      navigate('/cafes');
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     const formData = new FormData();
     formData.append('name', name);
     formData.append('description', description);
     if (logo) formData.append('logo', logo);
     formData.append('location', location);
 
-    try {
-      if (isEditing) {
-        await axios.put(`http://127.0.0.1:8000/api/cafes/${id}/`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-      } else {
-        await axios.post('http://127.0.0.1:8000/api/cafe/', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-      }
-      navigate('/cafes');
-    } catch (error) {
-      console.error('Error saving cafe:', error);
-    }
+    mutation.mutate({ id, name, description, logo, location });
   };
 
-  const handleCancel = () => {
-    navigate('/cafes');
-  };
+  useEffect(() => {
+    if (cafe) {
+      setName(cafe.name);
+      setDescription(cafe.description);
+      setLocation(cafe.location);
+    }
+  }, [cafe]);
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div>
-      <Typography variant="h4">{isEditing ? 'Edit Café' : 'Add New Café'}</Typography>
+      <Typography variant="h4">{id ? 'Edit Café' : 'Add New Café'}</Typography>
       <form onSubmit={handleSubmit}>
-        <ReusableTextbox
+        <TextField
           label="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          minLength={6}
-          maxLength={10}
           required
+          fullWidth
+          margin="normal"
         />
-        <ReusableTextbox
+        <TextField
           label="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          maxLength={256}
           required
+          fullWidth
+          margin="normal"
         />
         <TextField
           type="file"
@@ -93,20 +102,22 @@ const CafeForm: React.FC = () => {
               setLogo(null);
             }
           }}
-          inputProps={{ accept: 'image/*', maxSize: 2 * 1024 * 1024 }}
+          inputProps={{ accept: 'image/*' }}
           fullWidth
           margin="normal"
         />
-        <ReusableTextbox
+        <TextField
           label="Location"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           required
+          fullWidth
+          margin="normal"
         />
         <Button type="submit" variant="contained" color="primary">
           Submit
         </Button>
-        <Button onClick={handleCancel} variant="contained" color="secondary">
+        <Button onClick={() => navigate('/cafes')} variant="contained" color="secondary">
           Cancel
         </Button>
       </form>
