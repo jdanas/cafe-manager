@@ -18,6 +18,7 @@ const saveEmployee = async (data: any) => {
   if (data.id) {
     await axios.put(`http://127.0.0.1:8000/api/employees/update/${data.id}/`, data);
   } else {
+    // Fix: Change URL to match Django URL pattern
     await axios.post('http://127.0.0.1:8000/api/employees/create/', data);
   }
 };

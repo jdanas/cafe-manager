@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from .models import Employee, Cafe, EmployeeCafe
 from .serializers import EmployeeSerializer, CafeSerializer, EmployeeCafeSerializer
 from datetime import date
@@ -55,14 +56,15 @@ class CafeCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class EmployeeCreateView(APIView):
+    permission_classes = [AllowAny]
+    http_method_names = ['post']
+    
     def post(self, request):
         serializer = EmployeeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            print(serializer.errors)  # Log the errors
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CafeUpdateView(APIView):
     def put(self, request, pk):
