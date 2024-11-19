@@ -15,14 +15,17 @@ const fetchCafes = async () => {
 };
 
 const saveEmployee = async (data: any) => {
+  console.log('Sending data:', data); // Debug print
   if (data.id) {
-    await axios.put(`http://127.0.0.1:8000/api/employees/update/${data.id}/`, data);
+    return await axios.put(`http://127.0.0.1:8000/api/employees/update/${data.id}/`, data);
   } else {
-    // Fix: Change URL to match Django URL pattern
-    await axios.post('http://127.0.0.1:8000/api/employees/create/', data);
+    return await axios.post('http://127.0.0.1:8000/api/employees/create/', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }
 };
-
 const EmployeeForm: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -49,6 +52,9 @@ const EmployeeForm: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['employees'] });
       navigate('/employees');
+    },
+    onError: (error) => {
+      console.error('Error saving employee:', error);
     }
   });
 
@@ -64,16 +70,13 @@ const EmployeeForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const employeeData = {
-      id,
+    mutation.mutate({
       name,
       email_address: email,
       phone_number: phoneNumber,
       gender,
       cafe,
-    };
-
-    mutation.mutate(employeeData);
+    });
   };
 
   if (isLoadingEmployee) return <div>Loading...</div>;

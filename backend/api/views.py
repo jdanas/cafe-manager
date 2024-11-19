@@ -57,7 +57,6 @@ class CafeCreateView(APIView):
 
 class EmployeeCreateView(APIView):
     permission_classes = [AllowAny]
-    http_method_names = ['post']
     
     def post(self, request):
         serializer = EmployeeSerializer(data=request.data)
