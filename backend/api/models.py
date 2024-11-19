@@ -8,12 +8,20 @@ class Employee(models.Model):
     phone_number = models.CharField(max_length=8)
     gender = models.CharField(max_length=6, choices=[('Male', 'Male'), ('Female', 'Female')])
 
+    class Meta:
+        verbose_name = 'Employee'
+        verbose_name_plural = 'Employees'
+
 class Cafe(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
     description = models.TextField()
     logo = models.ImageField(upload_to='logos/', null=True, blank=True)
     location = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = 'Cafe'
+        verbose_name_plural = 'Cafes'
 
 class EmployeeCafe(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)

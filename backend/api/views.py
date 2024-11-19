@@ -56,17 +56,31 @@ class CafeCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class EmployeeCreateView(APIView):
-    permission_classes = [AllowAny]  # Explicitly allow all access
-    authentication_classes = []  # No authentication required
+    permission_classes = [AllowAny]
+    authentication_classes = []
     
-    def post(self, request):
-        print("Received data:", request.data)  # Debug print
+    def get(self, request):
+        # Add GET method to debug
+        return Response({'message': 'GET method allowed'}, status=status.HTTP_200_OK)
+    
+    def post(self, request, *args, **kwargs):
+        print("Method:", request.method)  # Debug print
+        print("Headers:", request.headers)  # Debug print
+        print("Received data:", request.data)
+        
         serializer = EmployeeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print("Validation errors:", serializer.errors)  # Debug print
+        
+        print("Validation errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def options(self, request, *args, **kwargs):
+        # Add OPTIONS method explicitly
+        response = super().options(request, *args, **kwargs)
+        response['Allow'] = 'POST, GET, OPTIONS'
+        return response
 
 class CafeUpdateView(APIView):
     def put(self, request, pk):
