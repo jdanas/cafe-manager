@@ -12,6 +12,9 @@ class Employee(models.Model):
         verbose_name = 'Employee'
         verbose_name_plural = 'Employees'
 
+    def __str__(self):
+        return self.name
+
 class Cafe(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
@@ -26,4 +29,4 @@ class Cafe(models.Model):
 class EmployeeCafe(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     cafe = models.ForeignKey(Cafe, on_delete=models.CASCADE)
-    start_date = models.DateField()
+start_date = models.DateField()
