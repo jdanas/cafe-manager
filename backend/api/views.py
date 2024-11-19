@@ -56,13 +56,16 @@ class CafeCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class EmployeeCreateView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [AllowAny]  # Explicitly allow all access
+    authentication_classes = []  # No authentication required
     
     def post(self, request):
+        print("Received data:", request.data)  # Debug print
         serializer = EmployeeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print("Validation errors:", serializer.errors)  # Debug print
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CafeUpdateView(APIView):
