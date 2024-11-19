@@ -85,7 +85,7 @@ DATABASES = {
         'USER': 'dbcafeuser',
         'PASSWORD': 'dbcafepassword',
         'HOST': 'localhost',  # Set to 'localhost' if running locally
-        'PORT': '',  # Set to '' for default
+        'PORT': '5433',  # Set to '' for default
     }
 }
 
