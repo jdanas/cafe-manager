@@ -1,8 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Button, TextField, Typography, RadioGroup, FormControlLabel, Radio, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
-import ReusableTextbox from './ReusableTextbox';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Typography, TextField, Button, FormControl, RadioGroup, FormControlLabel, Radio, Select, MenuItem, InputLabel } from '@mui/material';
+
+const fetchEmployee = async (id: string) => {
+  const response = await axios.get(`http://127.0.0.1:8000/api/employees/${id}/`);
+  return response.data;
+};
+
+const fetchCafes = async () => {
+  const response = await axios.get('http://127.0.0.1:8000/api/cafes/');
+  return response.data;
+};
+
+const saveEmployee = async (data: any) => {
+  if (data.id) {
+    await axios.put(`http://127.0.0.1:8000/api/employees/update/${data.id}/`, data);
+  } else {
+    await axios.post('http://127.0.0.1:8000/api/employees/create/', data);
+  }
+};
 
 const EmployeeForm: React.FC = () => {
   const [name, setName] = useState('');
@@ -10,46 +28,43 @@ const EmployeeForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [gender, setGender] = useState('');
   const [cafe, setCafe] = useState('');
-  const [cafes, setCafes] = useState([]);
-  const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const queryClient = useQueryClient();
+
+  const { data: cafes = [] } = useQuery({
+    queryKey: ['cafes'],
+    queryFn: fetchCafes
+  });
+
+  const { data: employee, isLoading: isLoadingEmployee } = useQuery({
+    queryKey: ['employee', id],
+    queryFn: () => fetchEmployee(id!),
+    enabled: !!id
+  });
+
+  const mutation = useMutation({
+    mutationFn: saveEmployee,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employees'] });
+      navigate('/employees');
+    }
+  });
 
   useEffect(() => {
-    fetchCafes();
-    if (id) {
-      setIsEditing(true);
-      fetchEmployee(id);
-    }
-  }, [id]);
-
-  const fetchCafes = async () => {
-    try {
-      const response = await axios.get('http://127.0.0.1:8000/api/cafes/');
-      console.log('Fetched cafes:', response.data); // Log the fetched data
-      setCafes(response.data);
-    } catch (error: any) {
-      console.error('Error fetching cafes:', error.response ? error.response.data : error.message);
-    }
-  };
-
-  const fetchEmployee = async (id: string) => {
-    try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/employees/${id}/`);
-      const employee = response.data;
+    if (employee) {
       setName(employee.name);
       setEmail(employee.email_address);
       setPhoneNumber(employee.phone_number);
       setGender(employee.gender);
       setCafe(employee.cafe);
-    } catch (error: any) {
-      console.error('Error fetching employee:', error.response ? error.response.data : error.message);
     }
-  };
+  }, [employee]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const employeeData = {
+      id,
       name,
       email_address: email,
       phone_number: phoneNumber,
@@ -57,45 +72,38 @@ const EmployeeForm: React.FC = () => {
       cafe,
     };
 
-    try {
-      if (isEditing) {
-        await axios.put(`http://127.0.0.1:8000/api/employees/update/${id}/`, employeeData);
-      } else {
-        await axios.post('http://127.0.0.1:8000/api/employees/create/', employeeData);
-      }
-      navigate('/employees');
-    } catch (error: any) {
-      console.error('Error saving employee:', error.response ? error.response.data : error.message);
-    }
+    mutation.mutate(employeeData);
   };
 
-  const handleCancel = () => {
-    navigate('/employees');
-  };
+  if (isLoadingEmployee) return <div>Loading...</div>;
 
   return (
     <div>
-      <Typography variant="h4">{isEditing ? 'Edit Employee' : 'Add New Employee'}</Typography>
+      <Typography variant="h4">{id ? 'Edit Employee' : 'Add New Employee'}</Typography>
       <form onSubmit={handleSubmit}>
-        <ReusableTextbox
+        <TextField
           label="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          minLength={6}
-          maxLength={10}
           required
+          fullWidth
+          margin="normal"
         />
-        <ReusableTextbox
+        <TextField
           label="Email Address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          fullWidth
+          margin="normal"
         />
-        <ReusableTextbox
+        <TextField
           label="Phone Number"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           required
+          fullWidth
+          margin="normal"
         />
         <FormControl component="fieldset" margin="normal">
           <RadioGroup
@@ -124,7 +132,7 @@ const EmployeeForm: React.FC = () => {
         <Button type="submit" variant="contained" color="primary">
           Submit
         </Button>
-        <Button onClick={handleCancel} variant="contained" color="secondary">
+        <Button onClick={() => navigate('/employees')} variant="contained" color="secondary">
           Cancel
         </Button>
       </form>
