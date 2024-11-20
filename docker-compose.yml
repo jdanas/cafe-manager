@@ -11,10 +11,12 @@ services:
       - "5433:5432"
 
   backend:
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     command: gunicorn --bind 0.0.0.0:8000 backend.wsgi:application
     volumes:
-      - .:/app
+      - ./backend:/app
     ports:
       - "8000:8000"
     depends_on:
