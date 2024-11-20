@@ -6,15 +6,15 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Set the working directory
-WORKDIR /app
+WORKDIR /backend
 
 # Install dependencies
-COPY requirements.txt /app/
+COPY requirements.txt /backend/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # Copy the project
-COPY . /app/
+COPY . /backend/
 
 # Collect static files
 RUN python manage.py collectstatic --noinput
