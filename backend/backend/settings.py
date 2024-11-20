@@ -79,14 +79,16 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# settings.py
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'dbcafe',
         'USER': 'dbcafeuser',
         'PASSWORD': 'dbcafepassword',
-        'HOST': 'localhost',  # Set to 'localhost' if running locally
-        'PORT': '5433',  # Set to '' for default
+        'HOST': 'db',  # Use the service name defined in docker-compose.yml
+        'PORT': '5432',
     }
 }
 

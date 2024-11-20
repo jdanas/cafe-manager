@@ -14,10 +14,10 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # Copy the project
-COPY . /backend/
+COPY . /app/
 
 # Set the working directory to the backend folder
-WORKDIR /backend/
+WORKDIR /app/backend
 
 # Collect static files, but ignore errors if there are no static files
 RUN python manage.py collectstatic --noinput || echo "No static files to collect"

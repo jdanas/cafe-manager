@@ -14,9 +14,9 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    command: gunicorn --bind 0.0.0.0:8000 backend.wsgi:application
+    command: gunicorn --chdir /app/backend --bind 0.0.0.0:8000 backend.wsgi:application
     volumes:
-      - ./backend:/app
+      - ./backend:/app/backend
     ports:
       - "8000:8000"
     depends_on:
