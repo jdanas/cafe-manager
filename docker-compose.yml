@@ -10,7 +10,7 @@ services:
     ports:
       - "5433:5432"
 
-  web:
+  backend:
     build: .
     command: gunicorn --bind 0.0.0.0:8000 backend.wsgi:application
     volumes:
@@ -21,3 +21,12 @@ services:
       - db
     environment:
       - DATABASE_URL=postgres://dbcafeuser:dbcafepassword@db:5432/dbcafe
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
